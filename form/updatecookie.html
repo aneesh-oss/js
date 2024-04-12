@@ -1,0 +1,180 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Contact Form</title>
+<style>
+  body {
+    font-family: Arial, sans-serif;
+    background-color: #f2f2f2;
+    margin: 0;
+    padding: 0;
+  }
+  .container {
+    max-width: 500px;
+    margin: 50px auto;
+    padding: 20px;
+    background-color: #fff;
+    border-radius: 10px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+  }
+  h2 {
+    text-align: center;
+    margin-bottom: 20px;
+  }
+  .form-group {
+    margin-bottom: 20px;
+  }
+  label {
+    display: block;
+    font-weight: bold;
+  }
+  input[type="text"],
+  input[type="email"],
+  input[type="tel"] {
+    width: 100%;
+    padding: 10px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    box-sizing: border-box;
+  }
+  input[type="submit"],
+  input[type="button"] {
+    background-color: #007bff;
+    color: #fff;
+    border: none;
+    border-radius: 5px;
+    padding: 10px 20px;
+    cursor: pointer;
+  }
+  input[type="submit"]:hover,
+  input[type="button"]:hover {
+    background-color: #0056b3;
+  }
+</style>
+</head>
+<body>
+
+<div class="container">
+  <h2>Contact Us</h2>
+  <form id="contactForm">
+    <div class="form-group">
+      <label for="name">Name:</label>
+      <input type="text" id="name" name="name" required>
+    </div>
+    <div class="form-group">
+      <label for="email">Email:</label>
+      <input type="email" id="email" name="email" required>
+    </div>
+    <div class="form-group">
+      <label for="phone">Phone:</label>
+      <input type="tel" id="phone" name="phone" pattern="[0-9]{3}-[0-9]{3}-[0-9]{4}" required>
+      <small>Format: 123-456-7890</small>
+    </div>
+    <div class="form-group">
+      <input type="submit" value="Submit">
+      <input type="button" id="update" value="Update">
+      <input type="button" id="delete" value="Delete">
+    </div>
+  </form>
+</div>
+
+<script>
+  // Load form data from cookie
+  window.onload = function() {
+    const formData = getFormDataFromCookie();
+    if (formData) {
+      document.getElementById("name").value = formData.name;
+      document.getElementById("email").value = formData.email;
+      document.getElementById("phone").value = formData.phone;
+    }
+  };
+
+  // Form submission event listener
+  document.getElementById("contactForm").addEventListener("submit", function(event) {
+    event.preventDefault(); // Prevent default form submission
+
+    // Validate form inputs
+    let name = document.getElementById("name").value.trim();
+    let email = document.getElementById("email").value.trim();
+    let phone = document.getElementById("phone").value.trim();
+
+    if (!name || !email || !phone) {
+      alert("Please fill in all fields.");
+      return;
+    }
+
+    if (!validateEmail(email)) {
+      alert("Please enter a valid email address.");
+      return;
+    }
+
+    if (!validatePhone(phone)) {
+      alert("Please enter a valid phone number (Format: 123-456-7890).");
+      return;
+    }
+
+    // Save form data to cookie
+    saveFormDataToCookie(name, email, phone);
+
+    alert("Form submitted successfully!");
+  });
+
+  // Update button click event listener
+  document.getElementById("update").addEventListener("click", function() {
+    const formData = {
+      name: document.getElementById("name").value.trim(),
+      email: document.getElementById("email").value.trim(),
+      phone: document.getElementById("phone").value.trim()
+    };
+    saveFormDataToCookie(formData.name, formData.email, formData.phone);
+    alert("Form data updated successfully!");
+  });
+
+  // Delete button click event listener
+  document.getElementById("delete").addEventListener("click", function() {
+    deleteFormDataFromCookie();
+    document.getElementById("contactForm").reset(); // Reset form
+    alert("Form data deleted successfully!");
+  });
+
+  // Email validation function
+  function validateEmail(email) {
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    return emailRegex.test(email);
+  }
+
+  // Phone number validation function
+  function validatePhone(phone) {
+    const phoneRegex = /^\d{3}-\d{3}-\d{4}$/;
+    return phoneRegex.test(phone);
+  }
+
+  // Function to save form data to cookie
+  function saveFormDataToCookie(name, email, phone) {
+    document.cookie = `name=${encodeURIComponent(name)}; expires=${new Date(Date.now() + 86400000).toUTCString()}`;
+    document.cookie = `email=${encodeURIComponent(email)}; expires=${new Date(Date.now() + 86400000).toUTCString()}`;
+    document.cookie = `phone=${encodeURIComponent(phone)}; expires=${new Date(Date.now() + 86400000).toUTCString()}`;
+  }
+
+  // Function to get form data from cookie
+  function getFormDataFromCookie() {
+    const cookies = document.cookie.split("; ").reduce((acc, cookie) => {
+      const [name, value] = cookie.split("=");
+      acc[name] = decodeURIComponent(value);
+      return acc;
+    }, {});
+    return cookies;
+  }
+
+  // Function to delete form data from cookie
+  function deleteFormDataFromCookie() {
+    document.cookie = "name=; expires=Thu, 01 Jan 1970 00:00:00 UTC;";
+    document.cookie = "email=; expires=Thu, 01 Jan 1970 00:00:00 UTC;";
+    document.cookie = "phone=; expires=Thu, 01 Jan 1970 00:00:00 UTC;";
+  }
+</script>
+
+</body>
+</html>
