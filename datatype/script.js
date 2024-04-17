@@ -81,3 +81,13 @@ let person5 = {
   
   let keys = Object.keys(person6);
   console.log(keys); 
+
+
+
+
+  for (let key of keys) {
+    console.log(key, person[key]);
+  }
+  for (let key in person) {
+    console.log(key, person[key]);
+  }
